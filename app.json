@@ -1,0 +1,17 @@
+{
+  "name": "watertankapp",
+  "displayName": "Nádrž",
+  "expo": {
+    "name": "watertankapp",
+    "slug": "watertankapp",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
