@@ -1,100 +1,123 @@
-import React, { useState, useEffect } from 'react';
-import DropdownAlert from 'react-native-dropdownalert';
-import CacheStore from 'react-native-cache-store';
+import React, { useState, useEffect, useCallback } from "react";
+import DropdownAlert from "react-native-dropdownalert";
+import CacheStore from "react-native-cache-store";
 import {
   View,
   Text,
   ActivityIndicator,
   ScrollView,
   RefreshControl,
-  AppState
- } from 'react-native';
+  SafeAreaView,
+  StatusBar
+} from "react-native";
 
-import WaterTankIcon from '../../assets/WaterTankIcon';
+import WaterTankIcon from "../../assets/WaterTankIcon";
 
-import api from '../../utils/Api.js';
-import errors from '../../helpers/Errors.js';
-import Color from '../../helpers/Colors.js';
-import styles from './styles.js';
-import Moment from 'moment-timezone';
-
-import axios from 'axios';
-
+import axios from "axios";
+import api from "../../utils/Api.js";
+import Errors from "../../helpers/Errors.js";
+import { apiTimeout } from "../../helpers/ApiHelper.js";
+import Color from "../../helpers/Colors.js";
+import styles from "./styles.js";
+import Moment from "moment-timezone";
 
 function Home() {
+  // ready to render
   const [isReady, setReady] = useState(false);
+  // data loading indicator
+  const [loading, setLoading] = useState(false);
   const [latestMeasurement, setLatestMeasurement] = useState();
-  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-      CacheStore.get("latestMeasurement").then((value) => {
-        setLatestMeasurement(value)
-        setReady(true)
-      });
+  useEffect(() => {
+    CacheStore.get("latestMeasurement").then(value => {
+      if (!value) setLoading(true);
 
-      async function getData() {
-        await api.get('/measurements?numberOfLatestRecords=1')
-                .then(res => {
-                    CacheStore.set('latestMeasurement', res.data[0]);
-                    setLatestMeasurement(res.data[0]);
-                })
-                .catch(err => {
-                  this.dropDownAlertRef.alertWithType('error',
-                                                      errors.find(error => err.request.status === error.status).message,
-                                                      errors.find(error => err.request.status === error.status).detail);
-                });
-        setLoading(false)
-      }
+      setLatestMeasurement(value);
+      setReady(true);
+    });
+  }, []);
 
-      getData()
-    }, [loading]);
+  useEffect(() => {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
 
-    const percentage = latestMeasurement ? latestMeasurement.tankFullness : 0
+    async function getData() {
+      apiTimeout(source, 5000);
+      await api
+        .get("/measurements?numberOfLatestRecords=1", {
+          cancelToken: source.token
+        })
+        .then(res => {
+          setLatestMeasurement(res.data[0]);
+        })
+        .catch(err => {
+          if (axios.isCancel(err)) {
+            error = Errors.find(error => error.status === 408);
+            this.dropDownAlertRef.alertWithType(
+              "error",
+              error.message,
+              error.detail
+            );
+          } else {
+            this.dropDownAlertRef.alertWithType(
+              "error",
+              Errors.find(error => err.request.status === error.status).message,
+              Errors.find(error => err.request.status === error.status).detail
+            );
+          }
+        });
+      setLoading(false);
+    }
+    if (loading) getData();
+  }, [loading]);
 
-    const loadingData = (
-        <View style={styles.loadingData}>
-          <ActivityIndicator size="large" color={Color.blueactivity}/>
-        </View>
-    )
+  useEffect(() => {
+    if (isReady) {
+      CacheStore.set("latestMeasurement", latestMeasurement);
+    }
+  }, [latestMeasurement]);
 
-    const loadedData = (
-      <Text style={styles.percentageText}>
-        {percentage + ' %'}
-      </Text>
-    )
+  const percentage = latestMeasurement ? latestMeasurement.tankFullness : 0;
 
-    const ready = (
-      <View style={styles.container}>
-        <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
-        <ScrollView contentContainerStyle={styles.scrollView}
-                    refreshControl={
-                      <RefreshControl refreshing={false}
-                                      onRefresh={e => setLoading(true)}/>
-                                    }>
+  return isReady ? (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={e => setLoading(true)}
+          />
+        }
+      >
+        <View>
           <View style={styles.waterTankIcon}>
-            <WaterTankIcon tankFullness={percentage}/>
+            <WaterTankIcon tankFullness={percentage} />
           </View>
           <View style={styles.centered}>
-            {loading ? loadingData : loadedData}
+            {loading ? (
+              <ActivityIndicator
+                style={styles.activityIndicator}
+                size="large"
+                color={Color.blueactivity}
+              />
+            ) : (
+              <Text style={styles.percentageText}>{percentage + " %"}</Text>
+            )}
           </View>
-        </ScrollView>
-        <Text style={styles.lastMeasurementDate}>{loading ?
-                                                   '' :
-                                                   Moment(latestMeasurement.createdAt)
-                                                   .tz("Europe/Prague")
-                                                   .format('DD. MM. YYYY HH:mm:ss')
-                                                   }
-        </Text>
-      </View>
-    )
-
-    const notReady = (
-      <View style={styles.container}>
-      </View>
-    )
-
-    return isReady ? ready : notReady
-
+        </View>
+        <DropdownAlert ref={ref => (this.dropDownAlertRef = ref)} />
+      </ScrollView>
+      <Text style={styles.lastMeasurementDate}>
+        {latestMeasurement
+          ? Moment(latestMeasurement.createdAt)
+              .tz("Europe/Prague")
+              .format("DD. MM. YYYY HH:mm:ss")
+          : ""}
+      </Text>
+    </SafeAreaView>
+  ) : null;
 }
 
 export default Home;

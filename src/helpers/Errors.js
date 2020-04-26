@@ -1,4 +1,4 @@
-const errors = [
+const Errors = [
   {
     "error": "NOT_CONNECTED",
     "status": 0,
@@ -18,6 +18,12 @@ const errors = [
     "detail": "Please contact administrator"
   },
   {
+    "error": "REQUEST_TIMEOUT",
+    "status": 408,
+    "message": "Can't load data right now",
+    "detail": "Please check your internet connection",
+  },
+  {
     "error": "SERVER_ERROR",
     "status": 500,
     "message": "Server Error",
@@ -25,4 +31,4 @@ const errors = [
   }
 ];
 
-export default errors;
+export default Errors;

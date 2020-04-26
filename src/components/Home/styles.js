@@ -7,14 +7,14 @@ import {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Color.white
   },
   waterTankIcon: {
-    alignItems: 'center',
-    marginTop: 38,
-    marginLeft: 10,
+    left: 1,
+    top: 2,
     transform: [
         {
-          scale: 0.52
+          scale: 0.73
         }
     ]
   },
@@ -28,13 +28,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   percentageText: {
-    fontSize: 30,
+    fontSize: 40,
     color: Color.textgray,
-    top: 1,
   },
-  loadingData: {
-    top: 3,
-    marginLeft: -5,
+  activityIndicator: {
+    right: 5,
   },
   scrollView: {
     flex: 1,
