@@ -1,13 +1,29 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ * @flow strict-local
+ */
+
 import React, { useEffect } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import {
+  View,
+  Text,
+  StatusBar,
+} from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 
-import Routes from './routes';
+import AppNavigator from './navigation'
 
-export default function App() {
+const App = () => {
   useEffect(() => {
     SplashScreen.hide()
   }, [])
 
-  return <Routes />
-}
+  return (
+      <AppNavigator/>
+  );
+};
+
+export default App;

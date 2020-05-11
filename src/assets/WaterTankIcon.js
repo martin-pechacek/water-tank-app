@@ -5,7 +5,7 @@ import Svg, { Defs,
   Path, Circle,
   G } from 'react-native-svg';
 
-import Color from '../helpers/Colors.js';
+import Color from '../styles/Colors.js';
 
 
 const WaterTankIcon = ({ tankFullness }) => {
