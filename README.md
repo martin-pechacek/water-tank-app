@@ -43,8 +43,9 @@ react-native bundle --platform android --dev false --entry-file index.js
 cd android
 
 gradlew assembleRelease
-
 ```
+
+It will create .apk file in android\app\build\outputs\apk which can be installed on your device
 
 ## License
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
