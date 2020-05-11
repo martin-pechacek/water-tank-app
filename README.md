@@ -1,4 +1,3 @@
-# water-tank-app
 # Water Tank
 
 React Native mobile app for displaying current status of water level in tank and simple dashboard charts.
