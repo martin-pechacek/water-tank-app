@@ -21,7 +21,7 @@ import Color from "../../helpers/Colors.js";
 import styles from "./styles.js";
 import Moment from "moment-timezone";
 
-function Home() {
+function HomeScreen() {
   // ready to render
   const [isReady, setReady] = useState(false);
   // data loading indicator
@@ -120,4 +120,4 @@ function Home() {
   ) : null;
 }
 
-export default Home;
+export default HomeScreen;
