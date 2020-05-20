@@ -46,7 +46,10 @@ function HomeScreen({ navigation }){
   const [measurements, setMeasurements] = useState();
 
   useEffect(() => {
-    setReady(true)
+    CacheStore.get("measurements").then((value) => {
+      setMeasurements(value)
+      setReady(true)
+    });
   }, [])
 
   useEffect(() => {
@@ -68,7 +71,6 @@ function HomeScreen({ navigation }){
           })));
         })
         .catch(err => {
-
           CacheStore.get("measurements").then(value => {
             setMeasurements(value);
           });
