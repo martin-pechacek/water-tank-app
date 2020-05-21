@@ -54,10 +54,11 @@ const getLastMonthDifference = (data) => {
   var currentMonth = new Date().getMonth()
 
   var lastMonthData = data.filter(x => new Date(x.createdAt).getMonth() == currentMonth)
+
   var firstInMonth = lastMonthData[0].tankFullness
   var lastInMonth = lastMonthData[lastMonthData.length-1].tankFullness
 
-  return (firstInMonth - lastInMonth)
+  return (lastInMonth - firstInMonth)
 }
 
 const UpperCharts = ({data, size}) => {
