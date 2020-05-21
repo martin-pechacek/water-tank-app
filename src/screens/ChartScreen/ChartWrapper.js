@@ -90,7 +90,11 @@ export default class CustomChart extends Component {
                       containerComponent={
                             <VictoryVoronoiContainer voronoiDimension="x"
                               labels={({ datum }) => `${Moment(datum.createdAt).format("DD. MM. YYYY HH:MM")} - ${datum.tankFullness} %`}
-                              labelComponent={<VictoryTooltip cornerRadius={0} flyoutStyle={{fill: "white"}}/>}
+                              labelComponent={
+                                <VictoryTooltip constrainToVisibleArea
+                                                flyoutWidth={165}
+                                                cornerRadius={0}
+                                                flyoutStyle={{fill: "white"}}/>}
                             />
                       }>
             {!loadingData ? (
